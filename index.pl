@@ -1,3 +1,5 @@
+% Codificações de caracteres e palavras
+
 code('a', 1).
 code('b', 2).
 code('c', 3).
@@ -24,6 +26,10 @@ code('w', 23).
 code('x', 24).
 code('y', 25).
 code('z', 26).
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 
 % Funções auxiliares
 concatenate([], L, L).
@@ -55,10 +61,16 @@ string2code([H | T], [X | S]) :- code(H, X), string2code(T, S), !.
 string2code(L, []).
 
 
-encript_cesar(Input, X) :- string_to_list(Input, Output), convert_cesar(Output, S), name(X, S).
+encript_cesar(InputS, InputN, X) :- 
+    string_to_list(InputS, CodeList), 
+    convert_cesar(CodeList, EncriptedCodeList, InputN), 
+    name(X, EncriptedCodeList).
 
-convert_cesar([H | T], [H1 | T1]) :- H1 is H + 1, convert_cesar(T, T1), !.
-convert_cesar(_, []) :- !.
+convert_cesar([H | T], [H1 | T1], InputN) :- H1 is H + InputN, convert_cesar(T, T1, InputN), !.
+convert_cesar(_, [], _) :- !.
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
 % Coisas úteis de saber 
@@ -68,3 +80,14 @@ convert_cesar(_, []) :- !.
 % check_sorted([]).
 % check_sorted([_]).
 % check_sorted([Head, TailHead | Tail]) :- Head =< TailHead, check_sorted([TailHead | Tail]).
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+% Problemas
+% encript_cesar: Se eu passar um número tal que o código do caracter + InputNumber seja > 26, dá merda.
+% Ele atribui um caracter estranho para a string.
+% 
+% 
+% 
