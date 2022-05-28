@@ -112,8 +112,23 @@ convert_cesar(_, [], _) :- !.
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+% Inserir palavras na base de dados
 
-% Coisas úteis de saber 
+:- use_module(library(persistency)).
+
+:- persistent word(word).
+
+:- initialization(init).
+
+init:-
+  absolute_file_name('fact.db', File, [access(write)]),
+  db_attach(File, []).
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+% Coisas úteis de saber
+
 % string_to_list('abcd', S). -> S = [97, 98, 99, 100].
 % name(X, [65, 112]). -> X = 'Ap'.
 
@@ -124,8 +139,8 @@ convert_cesar(_, [], _) :- !.
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-
 % Problemas
+
 % encript_cesar: Se eu passar um número tal que o código do caracter + InputNumber seja > 26, dá merda.
 % Ele atribui um caracter estranho para a string.
 % 
