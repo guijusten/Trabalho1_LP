@@ -27,11 +27,58 @@ code('x', 24).
 code('y', 25).
 code('z', 26).
 
+word(abacate).
+word(animal).
+word(bacia).
+word(brinco).
+word(colar).
+word(criatura).
+word(dirigente).
+word(disciplina).
+word(esquisito).
+word(epidemia).
+word(forma).
+word(findar).
+word(girassol).
+word(gastronomia).
+word(hieroglifo).
+word(hidrante).
+word(indagar).
+word(indicar).
+word(janta).
+word(jumento).
+word(liberar).
+word(labirinto).
+word(misterioso).
+word(magia).
+word(natural).
+word(noite).
+word(ostra).
+word(ocultar).
+word(participar).
+word(pedra).
+word(quarto).
+word(quinta).
+word(retroceder).
+word(runa).
+word(socar).
+word(sinalizar).
+word(ter).
+word(totalidade).
+word(urubu).
+word(uivar).
+word(viajar).
+word(vacilar).
+word(xilofone).
+word(xadrez).
+word(zebra).
+word(zumbido).
+
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-
 % Funções auxiliares
+
 concatenate([], L, L).
 concatenate([H | T], L, [H | Z]) :- concatenate(T, L, Z).
 
@@ -46,27 +93,20 @@ member(X,[Y|T]) :- member(X,T).
 first_elt([H | _], H).
 
 
-% code2string(S, [1, 2, 3])
-code2string([], [H | T]) :- code(X, H), code2string([X], T).
-code2string([X | S], [H | T]) :- code(X, H), code2string(S, T), !.
-code2string([], S).
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-code2string2(S, []).
-code2string2([H | T], [H1 | T1]) :- code(H, H1), test2(T, T1).
-code2string2(S, List) :- remove_last(S, List).
-
-% string2code('abc', L)
-string2code([H | T], []) :- code(H, X), string2code(T, [X]).
-string2code([H | T], [X | S]) :- code(H, X), string2code(T, S), !.
-string2code(L, []).
-
+% Cifra de César
 
 encript_cesar(InputS, InputN, X) :- 
     string_to_list(InputS, CodeList), 
     convert_cesar(CodeList, EncriptedCodeList, InputN), 
     name(X, EncriptedCodeList).
 
-convert_cesar([H | T], [H1 | T1], InputN) :- H1 is H + InputN, convert_cesar(T, T1, InputN), !.
+convert_cesar([H | T], [H1 | T1], InputN) :- 
+    H1 is H + InputN,
+    convert_cesar(T, T1, InputN), 
+    !.
+
 convert_cesar(_, [], _) :- !.
 
 
@@ -88,6 +128,11 @@ convert_cesar(_, [], _) :- !.
 % Problemas
 % encript_cesar: Se eu passar um número tal que o código do caracter + InputNumber seja > 26, dá merda.
 % Ele atribui um caracter estranho para a string.
+% 
+% Tenho somente 46 palavras na base de dados. Preciso de no minimo 100
+% 
+% No momento estou usando o string_to_list e name, mas preciso fazer o code2string e o string2code, 
+% que estão em arquivo separado
 % 
 % 
 % 
