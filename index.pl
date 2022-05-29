@@ -87,10 +87,13 @@ remove_first([_ | T], T).
 remove_last([_], []).
 remove_last([H | T], [H | NoLast]) :- without_last(T, NoLast).
 
-member(X,[X|_]).
-member(X,[Y|T]) :- member(X,T).
+member(X,[X | _]).
+member(X,[_ | T]) :- member(X,T).
 
 first_elt([H | _], H).
+
+list_length([], 0).
+list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -108,6 +111,30 @@ convert_cesar([H | T], [H1 | T1], InputN) :-
     !.
 
 convert_cesar(_, [], _) :- !.
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+% Cifra de Vigenere
+
+encript_vigenere(InputS, Key, X) :-
+  string_to_list(InputS, CodeList),
+  string_to_list(Key, KeyList),
+  list_length(KeyList, KeyLength),
+  convert_vigenere(CodeList, EncriptedCodeList, KeyList, KeyLength, 0),
+  name(X, EncriptedCodeList).
+
+convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, KeyLength) :-
+  convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, 0).
+
+convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, I) :-
+  nth0(I, KeyList, KeyValue),
+  RH is IH + KeyValue,
+  I2 is I + 1,
+  convert_vigenere(IT, RT, KeyList, KeyLength, I2),
+  !.
+
+convert_vigenere(_, [], _, _, _) :- !.
 
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -149,5 +176,11 @@ init:-
 % No momento estou usando o string_to_list e name, mas preciso fazer o code2string e o string2code, 
 % que estão em arquivo separado
 % 
+% No momento, vigenere está correto, mas se eu encriptar 'abc' com a chave 'abc', vou ter a soma 97 + 97, 
+% que dá merda
 % 
+% Provavelmente vou ter problemas no vigenere quando a chave for menor que a palavra a ser encriptada 
+% Para isso, quero pegar o length da lista, e a cada iteração, aumentar em 1 o valor de uma variável.
+% Qnd for codificar o caracter, pegar o elemento na posição L[variável]
+% Qnd essa variável == length, zerá-la.
 % 
