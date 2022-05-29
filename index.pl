@@ -1,5 +1,3 @@
-% Codificações de caracteres e palavras
-
 code('a', 1).
 code('b', 2).
 code('c', 3).
@@ -86,7 +84,7 @@ word(zumbido).
 :- initialization(init).
 
 init:-
-  absolute_file_name('fact.db', File, [access(write)]),
+  absolute_file_name('database.db', File, [access(write)]),
   db_attach(File, []).
 
 
@@ -113,17 +111,35 @@ list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+
+% code2string(S, [1, 2, 3])
+code2string([], [H | T]) :- code(X, H), code2string([X], T).
+code2string([X | S], [H | T]) :- code(X, H), code2string(S, T), !.
+code2string([], S).
+
+% string2code('abc', L)
+aux_string2code([H | T], []) :- code(H, X), aux_string2code(T, [X]).
+aux_string2code([H | T], [X | S]) :- code(H, X), aux_string2code(T, S), !.
+string2code(X, L) :-
+    atom_chars(X, List),
+    aux_string2code(List, L).
+aux_string2code(L, []).
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 % Cifra de César
 
 
 % Encriptando uma palavra com uma chave usando Cifra de César
-encript_cesar(InputS, InputN, X) :- 
-    string_to_list(InputS, CodeList), 
+encript_cesar(InputS, InputN, Result) :- 
+    string2code(InputS, CodeList), 
     convert_cesar(CodeList, EncriptedCodeList, InputN), 
-    name(X, EncriptedCodeList).
+    code2string(X, EncriptedCodeList),
+    atom_chars(Result, X).
 
 convert_cesar([H | T], [H1 | T1], InputN) :- 
-    H1 is H + InputN,
+    H1 is mod(H + InputN, 26),
     convert_cesar(T, T1, InputN), 
     !.
 
@@ -141,19 +157,20 @@ assert_encripted_cesar(InputS, InputN) :-
 
 
 % Encriptando uma palavra com uma chave usando Cifra de Vigenère
-encript_vigenere(InputS, Key, X) :-
-  string_to_list(InputS, CodeList),
-  string_to_list(Key, KeyList),
+encript_vigenere(InputS, Key, Result) :-
+  string2code(InputS, CodeList),
+  string2code(Key, KeyList),
   list_length(KeyList, KeyLength),
   convert_vigenere(CodeList, EncriptedCodeList, KeyList, KeyLength, 0),
-  name(X, EncriptedCodeList).
+  code2string(X, EncriptedCodeList),
+  atom_chars(Result, X).
 
 convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, KeyLength) :-
   convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, 0).
 
 convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, I) :-
   nth0(I, KeyList, KeyValue),
-  RH is IH + KeyValue,
+  RH is mod(IH + KeyValue, 26),
   I2 is I + 1,
   convert_vigenere(IT, RT, KeyList, KeyLength, I2),
   !.
@@ -187,14 +204,7 @@ assert_encripted_vigenere(InputS, Key) :-
 % 
 % Tenho somente 46 palavras na base de dados. Preciso de no minimo 100
 % 
-% No momento estou usando o string_to_list e name, mas preciso fazer o code2string e o string2code, 
-% que estão em arquivo separado
 % 
-% No momento, vigenere está correto, mas se eu encriptar 'abc' com a chave 'abc', vou ter a soma 97 + 97, 
-% que dá merda
 % 
-% Provavelmente vou ter problemas no vigenere quando a chave for menor que a palavra a ser encriptada 
-% Para isso, quero pegar o length da lista, e a cada iteração, aumentar em 1 o valor de uma variável.
-% Qnd for codificar o caracter, pegar o elemento na posição L[variável]
-% Qnd essa variável == length, zerá-la.
+% 
 % 
