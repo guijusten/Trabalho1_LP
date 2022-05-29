@@ -105,6 +105,9 @@ member(X,[_ | T]) :- member(X,T).
 
 first_elt([H | _], H).
 
+check_if_zero(0, 1).
+check_if_zero(N, N).
+
 list_length([], 0).
 list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
@@ -139,7 +142,8 @@ encript_cesar(InputS, InputN, Result) :-
     atom_chars(Result, X).
 
 convert_cesar([H | T], [H1 | T1], InputN) :- 
-    H1 is mod(H + InputN, 26),
+    Aux is mod(H + InputN, 26),
+    check_if_zero(Aux, H1),
     convert_cesar(T, T1, InputN), 
     !.
 
