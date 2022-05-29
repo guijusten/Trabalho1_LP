@@ -77,6 +77,21 @@ word(zumbido).
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+% Inserir palavras na base de dados
+
+:- use_module(library(persistency)).
+
+:- persistent word(word).
+
+:- initialization(init).
+
+init:-
+  absolute_file_name('fact.db', File, [access(write)]),
+  db_attach(File, []).
+
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 % Funções auxiliares
 
 concatenate([], L, L).
@@ -100,6 +115,8 @@ list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
 % Cifra de César
 
+
+% Encriptando uma palavra com uma chave usando Cifra de César
 encript_cesar(InputS, InputN, X) :- 
     string_to_list(InputS, CodeList), 
     convert_cesar(CodeList, EncriptedCodeList, InputN), 
@@ -113,10 +130,17 @@ convert_cesar([H | T], [H1 | T1], InputN) :-
 convert_cesar(_, [], _) :- !.
 
 
+% Inserindo uma palavra encriptada por Cifra de César no DB
+assert_encripted_cesar(InputS, InputN) :-
+  encript_cesar(InputS, InputN, Output),
+  assert_word(Output).
+
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 % Cifra de Vigenere
 
+
+% Encriptando uma palavra com uma chave usando Cifra de Vigenère
 encript_vigenere(InputS, Key, X) :-
   string_to_list(InputS, CodeList),
   string_to_list(Key, KeyList),
@@ -137,20 +161,10 @@ convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, I) :-
 convert_vigenere(_, [], _, _, _) :- !.
 
 
-% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-% Inserir palavras na base de dados
-
-:- use_module(library(persistency)).
-
-:- persistent word(word).
-
-:- initialization(init).
-
-init:-
-  absolute_file_name('fact.db', File, [access(write)]),
-  db_attach(File, []).
-
+% Inserindo uma palavra encriptada por Cifra de Vigenère no DB
+assert_encripted_vigenere(InputS, Key) :-
+  encript_vigenere(InputS, Key, Output),
+  assert_word(Output).
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
