@@ -116,17 +116,30 @@ list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
 
 % code2string(S, [1, 2, 3])
-code2string([], [H | T]) :- code(X, H), code2string([X], T).
-code2string([X | S], [H | T]) :- code(X, H), code2string(S, T), !.
-code2string([], S).
+code2string([], [H | T]) :- 
+  code(X, H), 
+  code2string([X], T).
+
+code2string([X | S], [H | T]) :- 
+  code(X, H), 
+  code2string(S, T), !.
+
+code2string([], _).
 
 % string2code('abc', L)
-aux_string2code([H | T], []) :- code(H, X), aux_string2code(T, [X]).
-aux_string2code([H | T], [X | S]) :- code(H, X), aux_string2code(T, S), !.
 string2code(X, L) :-
     atom_chars(X, List),
     aux_string2code(List, L).
-aux_string2code(L, []).
+
+aux_string2code([H | T], []) :- 
+  code(H, X), 
+  aux_string2code(T, [X]).
+
+aux_string2code([H | T], [X | S]) :- 
+  code(H, X), 
+  aux_string2code(T, S), !.
+
+aux_string2code(_, []).
 
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -187,6 +200,42 @@ assert_encripted_vigenere(InputS, Key) :-
   encript_vigenere(InputS, Key, Output),
   assert_word(Output).
 
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+% Inserindo palavras encriptadas na base de dados
+
+assert_encripted_cesar(anomalia, 5).
+assert_encripted_cesar(cardiologia, 9).
+assert_encripted_vigenere(documento, ler).
+assert_encripted_cesar(entrada, 1).
+assert_encripted_vigenere(fantasia, som).
+assert_encripted_cesar(gigante, 2).
+assert_encripted_vigenere(celeiro, obter).
+assert_encripted_cesar(idolatria, 19).
+assert_encripted_vigenere(gelatina, doce).
+assert_encripted_cesar(lobo, 25).
+assert_encripted_vigenere(pedregulho, filho).
+assert_encripted_cesar(nuvem, 5).
+assert_encripted_vigenere(natureza, vida).
+assert_encripted_cesar(pertencimento, 21).
+assert_encripted_vigenere(documento, ler).
+assert_encripted_cesar(rotina, 12).
+assert_encripted_vigenere(mitologia, grega).
+assert_encripted_cesar(troglodita, 7).
+assert_encripted_vigenere(vermelho, mar).
+assert_encripted_cesar(vassoura, 3).
+assert_encripted_vigenere(escudo, espada).
+assert_encripted_cesar(astrologia, 15).
+assert_encripted_vigenere(batalha, jogo).
+assert_encripted_cesar(entropia, 24).
+assert_encripted_vigenere(canil, osso).
+assert_encripted_cesar(boliche, 18).
+assert_encripted_vigenere(viralizar, fim).
+assert_encripted_cesar(livraria, 8).
+assert_encripted_vigenere(ferrovia, trem).
+
+
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 % Coisas úteis de saber
@@ -207,8 +256,4 @@ assert_encripted_vigenere(InputS, Key) :-
 % Ele atribui um caracter estranho para a string.
 % 
 % Tenho somente 46 palavras na base de dados. Preciso de no minimo 100
-% 
-% 
-% 
-% 
 % 
