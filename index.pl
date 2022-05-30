@@ -1,3 +1,9 @@
+% Código feito por Guilherme Fiorini Justen
+
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+% Bijeção de letras para numerais 
+
 code('a', 1).
 code('b', 2).
 code('c', 3).
@@ -147,7 +153,7 @@ aux_string2code(_, []).
 % Cifra de César
 
 
-% Encriptando uma palavra com uma chave usando Cifra de César
+% Encriptando uma palavra com uma chave
 encript_cesar(InputS, InputN, Result) :- 
     string2code(InputS, CodeList), 
     convert_cesar(CodeList, EncriptedCodeList, InputN), 
@@ -162,8 +168,22 @@ convert_cesar([H | T], [H1 | T1], InputN) :-
 
 convert_cesar(_, [], _) :- !.
 
+% Decriptando uma palavra sem saber a chave
 
-% Inserindo uma palavra encriptada por Cifra de César no DB
+decript_cesar(InputS, X) :-
+  aux_decript_cesar(InputS, X, 0).
+
+aux_decript_cesar(InputS, InputS, _) :-
+  word(InputS).
+
+aux_decript_cesar(InputS, X, Num) :-
+  encript_cesar(InputS, 1, Result),
+  Num < 26,
+  NewNum is Num + 1,
+  aux_decript_cesar(Result, X, NewNum).
+
+
+% Inserindo uma palavra encriptada no DB
 assert_encripted_cesar(InputS, InputN) :-
   encript_cesar(InputS, InputN, Output),
   assert_word(Output).
@@ -205,35 +225,7 @@ assert_encripted_vigenere(InputS, Key) :-
 
 % Inserindo palavras encriptadas na base de dados
 
-assert_encripted_cesar(anomalia, 5).
-assert_encripted_cesar(cardiologia, 9).
-assert_encripted_vigenere(documento, ler).
-assert_encripted_cesar(entrada, 1).
-assert_encripted_vigenere(fantasia, som).
-assert_encripted_cesar(gigante, 2).
-assert_encripted_vigenere(celeiro, obter).
-assert_encripted_cesar(idolatria, 19).
-assert_encripted_vigenere(gelatina, doce).
-assert_encripted_cesar(lobo, 25).
-assert_encripted_vigenere(pedregulho, filho).
-assert_encripted_cesar(nuvem, 5).
-assert_encripted_vigenere(natureza, vida).
-assert_encripted_cesar(pertencimento, 21).
-assert_encripted_vigenere(documento, ler).
-assert_encripted_cesar(rotina, 12).
-assert_encripted_vigenere(mitologia, grega).
-assert_encripted_cesar(troglodita, 7).
-assert_encripted_vigenere(vermelho, mar).
-assert_encripted_cesar(vassoura, 3).
-assert_encripted_vigenere(escudo, espada).
-assert_encripted_cesar(astrologia, 15).
-assert_encripted_vigenere(batalha, jogo).
-assert_encripted_cesar(entropia, 24).
-assert_encripted_vigenere(canil, osso).
-assert_encripted_cesar(boliche, 18).
-assert_encripted_vigenere(viralizar, fim).
-assert_encripted_cesar(livraria, 8).
-assert_encripted_vigenere(ferrovia, trem).
+
 
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
