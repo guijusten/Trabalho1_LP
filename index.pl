@@ -31,6 +31,9 @@ code('x', 24).
 code('y', 25).
 code('z', 26).
 
+
+% Palavras na base de dados
+
 word(abacate).
 word(animal).
 word(bacia).
@@ -111,7 +114,7 @@ member(X,[_ | T]) :- member(X,T).
 
 first_elt([H | _], H).
 
-check_if_zero(0, 1).
+check_if_zero(0, 26).
 check_if_zero(N, N).
 
 list_length([], 0).
@@ -121,7 +124,7 @@ list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-% code2string(S, [1, 2, 3])
+% code2string(S, [1, 2, 3]) -> S = [a, b, c]
 code2string([], [H | T]) :- 
   code(X, H), 
   code2string([X], T).
@@ -132,7 +135,7 @@ code2string([X | S], [H | T]) :-
 
 code2string([], _).
 
-% string2code('abc', L)
+% string2code('abc', L) -> L = [1, 2, 3]
 string2code(X, L) :-
     atom_chars(X, List),
     aux_string2code(List, L).
