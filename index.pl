@@ -120,12 +120,15 @@ check_if_zero(N, N).
 list_length([], 0).
 list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
+create_list_of_a(Len, List)  :- 
+    length(List, Len), 
+    maplist(=('a'), List).
 
-% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-% code2string(S, [1, 2, 3]) -> S = [a, b, c]
-code2string([], [H | T]) :- 
+% code2string(S, [1, 2, 3])
+code2string([], [H | T]) :-
   code(X, H), 
   code2string([X], T).
 
@@ -135,7 +138,7 @@ code2string([X | S], [H | T]) :-
 
 code2string([], _).
 
-% string2code('abc', L) -> L = [1, 2, 3]
+% string2code('abc', L)
 string2code(X, L) :-
     atom_chars(X, List),
     aux_string2code(List, L).
@@ -217,6 +220,36 @@ convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, I) :-
 
 convert_vigenere(_, [], _, _, _) :- !.
 
+% Decriptando uma palavra, sabendo o tamanho da chave
+
+% • um predicado de aridade 3 que relaciona duas listas com uma terceira lista de pares, na qual cada par
+% é formado por um elemento de cada uma das lista. Caso a segunda lista seja menor que a primeira,
+% replica-se o texto até que tenha o mesmo tamanho. Por exemplo, suponha L1 = [a, b, c, d, e] e L2 =
+% [f, l, a], a lista de pares deve ser L3 = [(a, f),(b, l),(c, a),(d, f),(e, l)]. Note que os elementos de L2
+% foram replicados até ter o mesmo tamanho de L1, resultando na lista [f, l, a, f, l];
+
+% • um predicado que relaciona uma mensagem cifrada, um tamanho de chave, uma palavra que sabida-
+% mente ocorre na mensagem decifrada e sua posição, com a chave. Por simplificação, pode assumir que
+% o tamanho da chave ́e menor que a palavra que ocorre no texto e que o texto;
+
+% • um predicado que relaciona uma mensagem cifrada, um tamanho de chave e uma palavra que ocorre
+% no texto com a mensagem decifrada;
+
+% • um predicado que relaciona uma mensagem cifrada, uma lista de possíveis palavras que ocorre no texto
+% e um tamanho de chave com a mensagem decifrada.
+
+decript_vigenere(InputS, KeyLen, X) :-
+  create_list_of_a(KeyLen, AList),
+  aux_decript_vigenere(InputS, X, KeyLen, AList).
+
+aux_decript_vigenere(InputS, InputS, _, _) :-
+  word(InputS).
+
+aux_decript_vigenere(InputS, X, Num, _) :-
+  encript_vigenere(InputS, 1, Result),
+  Num < 26,
+  NewNum is Num + 1,
+  aux_decript_vigenere(Result, X, NewNum, _).
 
 % Inserindo uma palavra encriptada por Cifra de Vigenère no DB
 assert_encripted_vigenere(InputS, Key) :-
