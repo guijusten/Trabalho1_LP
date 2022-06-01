@@ -1,6 +1,6 @@
-% Código feito por Guilherme Fiorini Justen
+%   Código feito por Guilherme Fiorini Justen, 201965041AC
 
-% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 % Bijeção de letras para numerais 
 
@@ -80,11 +80,66 @@ word(xilofone).
 word(xadrez).
 word(zebra).
 word(zumbido).
-
+word(anomalia).
+word(cardiologia).
+word(ler).
+word(documento).
+word(entrada).
+word(fantasia).
+word(som).
+word(gigante).
+word(celeiro).
+word(idolatria).
+word(gelatina).
+word(doce).
+word(lobo).
+word(pedregulho).
+word(filho).
+word(nuvem).
+word(natureza).
+word(vida).
+word(pertencimento).
+word(documento).
+word(baqueta).
+word(rotina).
+word(mitologia).
+word(grego).
+word(troglodita).
+word(vermelho).
+word(mar).
+word(vassoura).
+word(escudo).
+word(espada).
+word(astrologia).
+word(batalha).
+word(jogo).
+word(entropia).
+word(canil).
+word(osso).
+word(boliche).
+word(viralizar).
+word(fim).
+word(livraria).
+word(ferrovia).
+word(trem).
+word(tomada).
+word(touro).
+word(flores).
+word(mola).
+word(desnutrir).
+word(enquadrar).
+word(logotipo).
+word(torcida).
+word(suspeitar).
+word(pirotecnia).
+word(tecnicalidade).
+word(tampa).
+word(chamado).
+word(coringa).
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-% Inserir palavras na base de dados
+% Criando base de dados
 
 :- use_module(library(persistency)).
 
@@ -99,7 +154,7 @@ init:-
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-% Funções auxiliares
+% Predicados auxiliares
 
 concatenate([], L, L).
 concatenate([H | T], L, [H | Z]) :- concatenate(T, L, Z).
@@ -107,7 +162,7 @@ concatenate([H | T], L, [H | Z]) :- concatenate(T, L, Z).
 remove_first([_ | T], T).
 
 remove_last([_], []).
-remove_last([H | T], [H | NoLast]) :- remove_last(T, NoLast).
+remove_last([H | T], [H | NoLast]) :- without_last(T, NoLast).
 
 member(X,[X | _]).
 member(X,[_ | T]) :- member(X,T).
@@ -120,18 +175,14 @@ check_if_zero(N, N).
 list_length([], 0).
 list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
-
 create_list_of_a(Len, List)  :- 
     length(List, Len), 
     maplist(=('a'), List).
 
 
-sum_of_elts_in_list([], 0).
-sum_of_elts_in_list([H | T], N) :- sum_of_elts_in_list(T, N1), N is N1 + H.
-
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-% code2string(S, [1, 2, 3])
+% code2string
 code2string([], [H | T]) :-
   code(X, H), 
   code2string([X], T).
@@ -142,7 +193,8 @@ code2string([X | S], [H | T]) :-
 
 code2string([], _).
 
-% string2code('abc', L)
+
+% string2code
 string2code(X, L) :-
     atom_chars(X, List),
     aux_string2code(List, L).
@@ -170,22 +222,26 @@ encript_cesar(InputS, InputN, Result) :-
     code2string(X, EncriptedCodeList),
     atom_chars(Result, X).
 
+% Caso geral
 convert_cesar([H | T], [H1 | T1], InputN) :- 
     Aux is mod(H + InputN, 26),
     check_if_zero(Aux, H1),
     convert_cesar(T, T1, InputN), 
     !.
 
+% Critério de parada
 convert_cesar(_, [], _) :- !.
 
-% Decriptando uma palavra sem saber a chave
 
+% Decriptando uma palavra sem saber a chave
 decript_cesar(InputS, X) :-
   aux_decript_cesar(InputS, X, 0).
 
+% Caso tenha encontrado a palavra
 aux_decript_cesar(InputS, InputS, _) :-
   word(InputS).
 
+% Caso geral
 aux_decript_cesar(InputS, X, Num) :-
   encript_cesar(InputS, 1, Result),
   Num < 26,
@@ -212,9 +268,11 @@ encript_vigenere(InputS, Key, Result) :-
   code2string(X, EncriptedCodeList),
   atom_chars(Result, X).
 
+% Caso a chave chegue ao final
 convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, KeyLength) :-
   convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, 0).
 
+% Caso geral
 convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, I) :-
   nth0(I, KeyList, KeyValue),
   RH is mod(IH + KeyValue, 26),
@@ -222,87 +280,11 @@ convert_vigenere([IH | IT], [RH | RT], KeyList, KeyLength, I) :-
   convert_vigenere(IT, RT, KeyList, KeyLength, I2),
   !.
 
+% Critério de parada
 convert_vigenere(_, [], _, _, _) :- !.
 
-% Decriptando uma palavra, sabendo o tamanho da chave
-
-build_list(N, Len, Result) :-
-  aux_build_list(N, Len, AuxResult),
-  remove_last(AuxResult, Result),
-  list_length(Result, Num),
-  Num =:= Len, !.
-
-aux_build_list(0, Len, Result).
-
-aux_build_list(N, Len, [H | Result]) :-
-  !,
-  Aux is mod(N, 26),
-  check_if_zero(Aux, N1),
-  NewN is N - N1,
-  code(H, N1),
-  aux_build_list(NewN, Len, Result),
-  !.
-
-
-decript_vigenere(InputS, KeyLen, X) :-
-  create_list_of_a(KeyLen, AList),
-  atom_chars(Key, AList),
-  aux_decript_vigenere(InputS, X, KeyLen, Key).
-
-aux_decript_vigenere(InputS, InputS, _, _) :-
-  word(InputS).
-
-aux_decript_vigenere(InputS, X, KeyLen, Key) :-
-  encript_vigenere(InputS, Key, Result),
-  update_vigenere_key(Key, KeyLen, NewKey),
-  aux_decript_vigenere(InputS, X, KeyLen, NewKey).
-
-update_vigenere_key(Key, Result, NewKey) :-
-  string2code(Key, CodeList),
-  sum_of_elts_in_list(CodeList, N),
-  build_list(N, KeyLen, NewCodeList),
-  code2string(Result, NewCodeList).
-
-% aux_decript_vigenere(InputS, InputS, _, _) :-
-%   word(InputS).
-
-% aux_decript_vigenere(InputS, X, Num, _) :-
-%   encript_vigenere(InputS, 1, Result),
-%   Num < 26,
-%   NewNum is Num + 1,
-%   aux_decript_vigenere(Result, X, NewNum, _).
 
 % Inserindo uma palavra encriptada por Cifra de Vigenère no DB
 assert_encripted_vigenere(InputS, Key) :-
   encript_vigenere(InputS, Key, Output),
   assert_word(Output).
-
-
-% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-% Inserindo palavras encriptadas na base de dados
-
-
-
-
-% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-% Coisas úteis de saber
-
-% string_to_list('abcd', S). -> S = [97, 98, 99, 100].
-% name(X, [65, 112]). -> X = 'Ap'.
-
-% check_sorted([]).
-% check_sorted([_]).
-% check_sorted([Head, TailHead | Tail]) :- Head =< TailHead, check_sorted([TailHead | Tail]).
-
-
-% -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-% Problemas
-
-% encript_cesar: Se eu passar um número tal que o código do caracter + InputNumber seja > 26, dá merda.
-% Ele atribui um caracter estranho para a string.
-% 
-% Tenho somente 46 palavras na base de dados. Preciso de no minimo 100
-% 
