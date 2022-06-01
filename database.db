@@ -1,0 +1,3 @@
+created(1654032502.8465254).
+assert(word('')).
+assert(word(b)).

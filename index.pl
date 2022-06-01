@@ -107,7 +107,7 @@ concatenate([H | T], L, [H | Z]) :- concatenate(T, L, Z).
 remove_first([_ | T], T).
 
 remove_last([_], []).
-remove_last([H | T], [H | NoLast]) :- without_last(T, NoLast).
+remove_last([H | T], [H | NoLast]) :- remove_last(T, NoLast).
 
 member(X,[X | _]).
 member(X,[_ | T]) :- member(X,T).
@@ -120,10 +120,14 @@ check_if_zero(N, N).
 list_length([], 0).
 list_length([_ | T], N) :- length(T, N1), N is N1 + 1.
 
+
 create_list_of_a(Len, List)  :- 
     length(List, Len), 
     maplist(=('a'), List).
 
+
+sum_of_elts_in_list([], 0).
+sum_of_elts_in_list([H | T], N) :- sum_of_elts_in_list(T, N1), N is N1 + H.
 
 % -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -222,34 +226,51 @@ convert_vigenere(_, [], _, _, _) :- !.
 
 % Decriptando uma palavra, sabendo o tamanho da chave
 
-% • um predicado de aridade 3 que relaciona duas listas com uma terceira lista de pares, na qual cada par
-% é formado por um elemento de cada uma das lista. Caso a segunda lista seja menor que a primeira,
-% replica-se o texto até que tenha o mesmo tamanho. Por exemplo, suponha L1 = [a, b, c, d, e] e L2 =
-% [f, l, a], a lista de pares deve ser L3 = [(a, f),(b, l),(c, a),(d, f),(e, l)]. Note que os elementos de L2
-% foram replicados até ter o mesmo tamanho de L1, resultando na lista [f, l, a, f, l];
+build_list(N, Len, Result) :-
+  aux_build_list(N, Len, AuxResult),
+  remove_last(AuxResult, Result),
+  list_length(Result, Num),
+  Num =:= Len, !.
 
-% • um predicado que relaciona uma mensagem cifrada, um tamanho de chave, uma palavra que sabida-
-% mente ocorre na mensagem decifrada e sua posição, com a chave. Por simplificação, pode assumir que
-% o tamanho da chave ́e menor que a palavra que ocorre no texto e que o texto;
+aux_build_list(0, Len, Result).
 
-% • um predicado que relaciona uma mensagem cifrada, um tamanho de chave e uma palavra que ocorre
-% no texto com a mensagem decifrada;
+aux_build_list(N, Len, [H | Result]) :-
+  !,
+  Aux is mod(N, 26),
+  check_if_zero(Aux, N1),
+  NewN is N - N1,
+  code(H, N1),
+  aux_build_list(NewN, Len, Result),
+  !.
 
-% • um predicado que relaciona uma mensagem cifrada, uma lista de possíveis palavras que ocorre no texto
-% e um tamanho de chave com a mensagem decifrada.
 
 decript_vigenere(InputS, KeyLen, X) :-
   create_list_of_a(KeyLen, AList),
-  aux_decript_vigenere(InputS, X, KeyLen, AList).
+  atom_chars(Key, AList),
+  aux_decript_vigenere(InputS, X, KeyLen, Key).
 
 aux_decript_vigenere(InputS, InputS, _, _) :-
   word(InputS).
 
-aux_decript_vigenere(InputS, X, Num, _) :-
-  encript_vigenere(InputS, 1, Result),
-  Num < 26,
-  NewNum is Num + 1,
-  aux_decript_vigenere(Result, X, NewNum, _).
+aux_decript_vigenere(InputS, X, KeyLen, Key) :-
+  encript_vigenere(InputS, Key, Result),
+  update_vigenere_key(Key, KeyLen, NewKey),
+  aux_decript_vigenere(InputS, X, KeyLen, NewKey).
+
+update_vigenere_key(Key, Result, NewKey) :-
+  string2code(Key, CodeList),
+  sum_of_elts_in_list(CodeList, N),
+  build_list(N, KeyLen, NewCodeList),
+  code2string(Result, NewCodeList).
+
+% aux_decript_vigenere(InputS, InputS, _, _) :-
+%   word(InputS).
+
+% aux_decript_vigenere(InputS, X, Num, _) :-
+%   encript_vigenere(InputS, 1, Result),
+%   Num < 26,
+%   NewNum is Num + 1,
+%   aux_decript_vigenere(Result, X, NewNum, _).
 
 % Inserindo uma palavra encriptada por Cifra de Vigenère no DB
 assert_encripted_vigenere(InputS, Key) :-

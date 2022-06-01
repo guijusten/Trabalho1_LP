@@ -43,7 +43,21 @@ code2string2(S, []).
 code2string2([H | T], [H1 | T1]) :- code(H, H1), test2(T, T1).
 code2string2(S, List) :- remove_last(S, List).
 
+% • um predicado de aridade 3 que relaciona duas listas com uma terceira lista de pares, na qual cada par
+% é formado por um elemento de cada uma das lista. Caso a segunda lista seja menor que a primeira,
+% replica-se o texto até que tenha o mesmo tamanho. Por exemplo, suponha L1 = [a, b, c, d, e] e L2 =
+% [f, l, a], a lista de pares deve ser L3 = [(a, f),(b, l),(c, a),(d, f),(e, l)]. Note que os elementos de L2
+% foram replicados até ter o mesmo tamanho de L1, resultando na lista [f, l, a, f, l];
 
+% • um predicado que relaciona uma mensagem cifrada, um tamanho de chave, uma palavra que sabida-
+% mente ocorre na mensagem decifrada e sua posição, com a chave. Por simplificação, pode assumir que
+% o tamanho da chave ́e menor que a palavra que ocorre no texto e que o texto;
+
+% • um predicado que relaciona uma mensagem cifrada, um tamanho de chave e uma palavra que ocorre
+% no texto com a mensagem decifrada;
+
+% • um predicado que relaciona uma mensagem cifrada, uma lista de possíveis palavras que ocorre no texto
+% e um tamanho de chave com a mensagem decifrada.
 
 first_pred(L1, L2, Result) :-
   aux_first_pred(L1, L2, L2, Result).
