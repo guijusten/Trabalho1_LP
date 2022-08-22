@@ -1,7 +1,0 @@
-created(1654047187.6135962).
-assert(word(cocococo)).
-retract(word(cocococo)).
-assert(word(kym)).
-assert(word(tvrowrsvh)).
-assert(word(cu)).
-retract(word(cu)).
